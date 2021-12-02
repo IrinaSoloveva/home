@@ -1,8 +1,14 @@
-<?
-require_once('../config/config.php');
+<?php
+
+/**
+ * File with settings
+ */
+require_once '../config/config.php';
 
 $page = $_GET["page"];
-if (empty($page)) $page = "index";
+if (empty($page)) {
+    $page = "index";
+}
 
 $arr = [
     "Московская область" => ['Москва', 'Зеленоград', 'Клин'],

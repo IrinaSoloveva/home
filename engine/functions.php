@@ -1,5 +1,6 @@
-<?
-function renderPage ($page, $vars = []) {
+<?php
+function renderPage($page, $vars = [])
+{
     $template = TPL_DIR . '/' . $page . '.tpl';
     $result = file_get_contents($template);
     if (empty($vars)) {
@@ -13,7 +14,8 @@ function renderPage ($page, $vars = []) {
     return $result;
 }
 
-function home3_3 ($arr) {
+function home3_3($arr)
+{
     $str = "";
     foreach ($arr as $key => $value) {
         $str .= $key . ': <br>';
@@ -25,7 +27,8 @@ function home3_3 ($arr) {
     return $str;
 }
 
-function home3_8 ($arr) {
+function home3_8($arr)
+{
     $str = "";
     foreach ($arr as $key => $value) {
         $key = $key . ': <br>';
@@ -44,7 +47,15 @@ function home3_8 ($arr) {
     return $str;
 }
 
-function home3 ($arr, $strUp = "") {
+/**
+ * home3
+ *
+ * @param  mixed  $arr 
+ * @param  string $strUp 
+ * @return void
+ */
+function home3($arr, $strUp = "")
+{
     $str = "";
     foreach ($arr as $key => $value) {
         $key = $key . ': <br>';
@@ -56,48 +67,62 @@ function home3 ($arr, $strUp = "") {
                     if (mb_substr($val, 0, 1) == 'К') {
                         $str .= $key . $val . ', ';
                         $key = "";
-                    }                 
+                    }
                 }
                 $str = substr_replace($str, '. <br>', -2);
-            }          
+            }
         }
     }
-    return $str;           
+    return $str;
 }
 
-function build_tag ($name, $id = "", $class = "", $content) {
+/**
+ * Build_tag
+ *
+ * @param string $name 
+ * @param string $content 
+ * @param string $id 
+ * @param string $class 
+ * 
+ * @return void
+ */
+function buildTag($name, $content, $id = "", $class = "")
+{
     $html = "<{$name} id= '{$id}' class='{$class}'>{$content}</{$name}>";
     return $html;
 }
 
-function build_href ($href = "#", $content) {
+function build_href($href = "#", $content)
+{
     $html = "<a href='{$href}'>{$content}</a>";
     return $html;
 }
 
-function build_menu_mega_flex ($title, $arr) {
+function build_menu_mega_flex($title, $arr)
+{
     $content = "";
     foreach ($arr as $key => $value) {
-        $content .= build_tag("li", "", "", build_href($value, $key));
+        $content .= buildTag("li", "", "", build_href($value, $key));
     }
-    $html = build_tag("h3", "", "", $title) . build_tag("ul", "", "", $content);
-    return build_tag("div", "", "mega-flex menu__mega-flex mega-flex_bright", $html);
+    $html = buildTag("h3", "", "", $title) . buildTag("ul", "", "", $content);
+    return buildTag("div", "", "mega-flex menu__mega-flex mega-flex_bright", $html);
 }
 
-function build_menu ($arr, $html = "") {
+function build_menu($arr, $html = "")
+{
     foreach ($arr as $key => $value) {
-        
+
         if (is_array($value)) {
-           
-            $content = build_tag("div", "", "triangle", "");
+
+            $content = buildTag("div", "", "triangle", "");
 
             foreach ($value as $key_ins => $value_ins) {
                 $content .= build_menu_mega_flex($key_ins, $value_ins);
             }
-            $content = build_tag("div", "", "mega menu__mega", $content);
-            $html .= build_tag("li", "", "", build_href("#", $key) . $content);
+            $content = buildTag("div", "", "mega menu__mega", $content);
+            $html .= buildTag("li", "", "", build_href("#", $key) . $content);
         } else {
-            $html .= build_tag("li", "", "", build_href($value, $key));
+            $html .= buildTag("li", "", "", build_href($value, $key));
         }
     }
 

@@ -1,3 +1,4 @@
 {
-    "vscodeGoogleTranslate.preferredLanguage": "English"
+    "vscodeGoogleTranslate.preferredLanguage": "English",
+    "phpSniffer.autoDetect": true
 }

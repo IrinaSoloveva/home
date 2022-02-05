@@ -151,15 +151,20 @@ function build_tag ($name, $id = "", $class = "", $content) {
     return $html;
 }
 
-function build_href ($href = "#", $content) {
-    $html = "<a href='{$href}'>{$content}</a>";
+function build_href ($href, $class = "", $content) {
+    $html = "<a href='{$href}' class='{$class}'>{$content}</a>";
     return $html;
+}
+
+function build_img ($src) {
+    $img = "<img src='{$src}'>";
+    return $img;
 }
 
 function build_menu_mega_flex ($title, $arr) {
     $content = "";
     foreach ($arr as $key => $value) {
-        $content .= build_tag("li", "", "", build_href($value, $key));
+        $content .= build_tag("li", "", "", build_href($value, "", $key));
     }
     $html = build_tag("h3", "", "", $title) . build_tag("ul", "", "", $content);
     return build_tag("div", "", "mega-flex menu__mega-flex mega-flex_bright", $html);
@@ -176,9 +181,9 @@ function build_menu ($arr, $html = "") {
                 $content .= build_menu_mega_flex($key_ins, $value_ins);
             }
             $content = build_tag("div", "", "mega menu__mega", $content);
-            $html .= build_tag("li", "", "", build_href("#", $key) . $content);
+            $html .= build_tag("li", "", "", build_href("#", "", $key) . $content);
         } else {
-            $html .= build_tag("li", "", "", build_href($value, $key));
+            $html .= build_tag("li", "", "", build_href($value, "", $key));
         }
     }
 
@@ -234,3 +239,182 @@ function build_menu ($arr, $html = "") {
         </div>
     </nav>
 */
+
+function home4 ($dir) {
+    $content = "";
+    $files = array_splice(scandir($dir), 2);
+    if (is_array($files)) {
+        foreach ($files as $name) {
+            $file_name = $dir . "/" . $name;
+
+            $contentDiv = build_href("#", "product", build_img($file_name) . build_productInf());
+            $contentDiv .= build_add_to_cart("basket_productUnit.png");
+
+            $content .= build_tag("div", "", "productUnit", $contentDiv);
+        }
+    }
+    return $content;
+}
+
+function build_productInf ($arr = []) {
+    if (empty($arr)) {
+        $arr = [
+            "productName" => "Mango  People  T-shirt",
+            "productPrice" => "$52.00"
+        ];             
+    }
+    $content = build_tag ("p", "", "productName tac", $arr["productName"]);
+    $content .= build_tag ("span", "", "productPrice", $arr["productPrice"]);
+    $productInf = build_tag("div", "", "productInf", $content);
+
+    return $productInf;
+}
+
+/**
+ * Undocumented function
+ *
+ * @param String $img Имя файла с иконой корзины для карточек товаров
+ * @return void
+ */
+function build_add_to_cart (String $img) {
+    $iconName = ICON_DIR . "/" . $img;
+    $contentHref = build_href("#", "add-to-cart-btn tac", build_img($iconName) . build_tag("span", "", "", "Add to Cart"));
+    $content = build_tag("div", "", "add-to-cart", $contentHref);
+
+    return $content;
+}
+
+/*
+ <div class="productsAll">
+        <div class="container">
+            <div class="productUnit">
+                <a href="singlePage.html" class="product">
+                    <img src="img/product/Layer%202.jpg">
+                    <div class="productInf">
+                        <p class="productName tac">Mango  People  T-shirt</p>
+                        <span class="productPrice">$52.00</span>
+                    </div>
+                </a>
+                <div class="add-to-cart">
+                    <a href="#" class="add-to-cart-btn tac">
+                        <img src="img/product/copyBasket.png">
+                        <span>Add to Cart</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="productUnit">
+                <a href="singlePage.html" class="product">
+                    <img src="img/product/Layer%203.jpg">
+                    <div class="productInf">
+                        <p class="productName tac">Mango  People  T-shirt</p>
+                        <span class="productPrice">$52.00</span>
+                    </div>
+                </a>
+                <div class="add-to-cart">
+                    <a href="#" class="add-to-cart-btn tac">
+                        <img src="img/product/copyBasket.png">
+                        <span>Add to Cart</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="productUnit">
+                <a href="singlePage.html" class="product">
+                    <img src="img/product/Layer%205.jpg">
+                    <div class="productInf">
+                        <p class="productName tac">Mango  People  T-shirt</p>
+                        <span class="productPrice">$52.00</span>
+                    </div>
+                </a>
+                <div class="add-to-cart">
+                    <a href="#" class="add-to-cart-btn tac">
+                        <img src="img/product/copyBasket.png">
+                        <span>Add to Cart</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="productUnit">
+                <a href="singlePage.html" class="product">
+                    <img src="img/product/Layer%206.jpg">
+                    <div class="productInf">
+                        <p class="productName tac">Mango  People  T-shirt</p>
+                        <span class="productPrice">$52.00</span>
+                    </div>
+                </a>
+                <div class="add-to-cart">
+                    <a href="#" class="add-to-cart-btn tac">
+                        <img src="img/product/copyBasket.png">
+                        <span>Add to Cart</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="productUnit">
+                <a href="singlePage.html" class="product">
+                    <img src="img/product/Layer%207.jpg">
+                    <div class="productInf">
+                        <p class="productName tac">Mango  People  T-shirt</p>
+                        <span class="productPrice">$52.00</span>
+                    </div>
+                </a>
+                <div class="add-to-cart">
+                    <a href="#" class="add-to-cart-btn tac">
+                        <img src="img/product/copyBasket.png">
+                        <span>Add to Cart</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="productUnit">
+                <a href="singlePage.html" class="product">
+                    <img src="img/product/Layer%208.jpg">
+                    <div class="productInf">
+                        <p class="productName tac">Mango  People  T-shirt</p>
+                        <span class="productPrice">$52.00</span>
+                    </div>
+                </a>
+                <div class="add-to-cart">
+                    <a href="#" class="add-to-cart-btn tac">
+                        <img src="img/product/copyBasket.png">
+                        <span>Add to Cart</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="productUnit">
+                <a href="singlePage.html" class="product">
+                    <img src="img/product/Layer%209.jpg">
+                    <div class="productInf">
+                        <p class="productName tac">Mango  People  T-shirt</p>
+                        <span class="productPrice">$52.00</span>
+                    </div>
+                </a>
+                <div class="add-to-cart">
+                    <a href="#" class="add-to-cart-btn tac">
+                        <img src="img/product/copyBasket.png">
+                        <span>Add to Cart</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="productUnit">
+                <a href="singlePage.html" class="product">
+                    <img src="img/product/Layer%202.jpg">
+                    <div class="productInf">
+                        <p class="productName tac">Mango  People  T-shirt</p>
+                        <span class="productPrice">$52.00</span>
+                    </div>
+                </a>
+                <div class="add-to-cart">
+                    <a href="#" class="add-to-cart-btn tac">
+                        <img src="img/product/copyBasket.png">
+                        <span>Add to Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+*/ 

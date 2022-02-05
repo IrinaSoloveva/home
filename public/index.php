@@ -57,7 +57,8 @@ $vars = [
     "title" => $page,
     "home" => home3($arr, 'К'),
     "year"=> date("Y"),
-    "menu" => build_menu($menu)
+    "menu" => build_menu($menu),
+    "products_All" => home4(IMAGE_DIR . "/" . $page . "/productsAll")
 ];
 
 

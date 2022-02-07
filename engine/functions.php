@@ -245,176 +245,19 @@ function home4 ($dir) {
     $files = array_splice(scandir($dir), 2);
     if (is_array($files)) {
         foreach ($files as $name) {
-            $file_name = $dir . "/" . $name;
-
-            $contentDiv = build_href("#", "product", build_img($file_name) . build_productInf());
-            $contentDiv .= build_add_to_cart("basket_productUnit.png");
-
-            $content .= build_tag("div", "", "productUnit", $contentDiv);
+            if (!empty($name)) {
+                $vars = [
+                    "src_img" => $dir . "/" . $name,
+                    "href_img" => "#",
+                    "name_product" => "Mango  People  T-shirt",
+                    "price_product" => "$52.00",
+                    "href_icon" => "#",
+                    "src_icon" => ICON_DIR . "/" . "basket_productUnit.png"
+                ];
+                $content .= renderPage("productUnit", $vars);
+            }
+           
         }
     }
     return $content;
 }
-
-function build_productInf ($arr = []) {
-    if (empty($arr)) {
-        $arr = [
-            "productName" => "Mango  People  T-shirt",
-            "productPrice" => "$52.00"
-        ];             
-    }
-    $content = build_tag ("p", "", "productName tac", $arr["productName"]);
-    $content .= build_tag ("span", "", "productPrice", $arr["productPrice"]);
-    $productInf = build_tag("div", "", "productInf", $content);
-
-    return $productInf;
-}
-
-/**
- * Undocumented function
- *
- * @param String $img Имя файла с иконой корзины для карточек товаров
- * @return void
- */
-function build_add_to_cart (String $img) {
-    $iconName = ICON_DIR . "/" . $img;
-    $contentHref = build_href("#", "add-to-cart-btn tac", build_img($iconName) . build_tag("span", "", "", "Add to Cart"));
-    $content = build_tag("div", "", "add-to-cart", $contentHref);
-
-    return $content;
-}
-
-/*
- <div class="productsAll">
-        <div class="container">
-            <div class="productUnit">
-                <a href="singlePage.html" class="product">
-                    <img src="img/product/Layer%202.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="singlePage.html" class="product">
-                    <img src="img/product/Layer%203.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="singlePage.html" class="product">
-                    <img src="img/product/Layer%205.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="singlePage.html" class="product">
-                    <img src="img/product/Layer%206.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="singlePage.html" class="product">
-                    <img src="img/product/Layer%207.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="singlePage.html" class="product">
-                    <img src="img/product/Layer%208.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="singlePage.html" class="product">
-                    <img src="img/product/Layer%209.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="singlePage.html" class="product">
-                    <img src="img/product/Layer%202.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-*/ 

@@ -1,6 +1,6 @@
 <div class="productUnit">
-                <a href="{{HREF_IMG}}" class="product">
-                    <img src="{{SRC_IMG}}">
+                <a href="{{HREF_IMG}}/?id={{ID}}" class="product">
+                    <img src="{{DIR_IMG_PAGE}}{{DIR_IMG_CLASS}}{{ID}}.jpg">
                     <div class="productInf">
                         <p class="productName tac">{{NAME_PRODUCT}}</p>
                         <span class="productPrice">{{PRICE_PRODUCT}}</span>

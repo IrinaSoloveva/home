@@ -1,98 +1,174 @@
 <?
-function renderPage ($page, $vars = []) {
-    $template = TPL_DIR . '/' . $page . '.tpl';
+/*
+	Так называемый роутер, навигатор, главное место в движке,
+	где определяется какая страница вызвана и выполняются
+	необходимые действия для нее, а именно
+	присваиваются, получаются, вычисляются значения
+	для подстановки в шаблон, формируется переменная vars
+	На входе имя запрашиваемой страницы
 
-    if (!is_file($template)) {
-        echo 'Template file "' . $template . '" not found';
-        exit(ERROR_NOT_FOUND);
+*/
+function prepareVariables($page_name){
+    //var_dump($page_name);
+    $vars = [];
+	//в зависимости от того, какую страницу вызываем
+	//такой блок кода для нее и выполняем
+    switch ($page_name){
+        case "index":
+            $vars["year"] = date("Y");
+            $vars["products_All"] = products_All($page_name);
+            $vars["menu"] = build_menu();
+            $vars["dir_img_page"] = IMAGE_DIR . "/" . $page_name . "/";
+            break;     
+        case "singlePage":
+            $vars["id"] = (int)$_GET['id'];           
+            $vars["year"] = date("Y");
+            $vars["products_All"] = products_All($page_name);
+            $vars["menu"] = build_menu();
+            $vars["dir_img_page"] = IMAGE_DIR . "/" . $page_name . "/";
+            break; 
+        case "feedback": 
+            crudFeedback($vars);
+            break;  
+        case "products_All":
+            $vars["dir_img_class"] = "products_All" . "/";
+            $vars["href_img"] = "singlePage";
+            $vars["name_product"] = "Mango  People  T-shirt";
+            $vars["price_product"] = "$52.00";
+            $vars["href_icon"] = "#";
+            $vars["src_icon"] = ICON_DIR . "/" . "basket_productUnit.png";
+            break;    
+        case "news":
+			//если вызвана страница новостей заполним для нее поля
+			//лента новостей будет не просто строка текста,
+			//а массивом новостей, БЕЗ ТЕГОВ, просто текст
+			//pasteValues сам заменит этот текст на шаблон
+            $vars["newsfeed"] = getNews();
+            $vars["test"] = "Привет!";
+            break;
+        case "newspage":
+			//если вызвана страница для полной новости
+			//то получим текст полной новости content
+			//через выполнение запроса к базе по номеру новости
+			//который получаем через GET
+            $content = getNewsContent((int)$_GET['id_news']);
+            $vars["news_title"] = $content["news_title"];
+            $vars["news_content"] = $content["news_content"];
+            break;      
+		case "delete":
+			//дополнительная функция удаления новости
+			//запрос вида site/delete/?id_news=2 т.е. удалите ка вторую новость
+			//Получаем номер новости через GET
+			$idx = (int)$_GET["id_news"];
+			//вызываем функцию удаления новости
+			delNews($idx);
+			//возвращаемся на страницу с новостями, никаких значений возвращать уже не нужно
+			header("location: /news/");
+            break;
     }
+	//возвращаем готовый массив значения vars для шаблона 
 
-    if (filesize($template) === 0) {
-        echo 'Template file "' . $template . '" is empty';
-        exit(ERROR_TEMPLATE_EMPTY);
+    return $vars;
+}
+
+function crudFeedback (&$vars) {
+    $vars["action"] = "save";  
+    $vars["edit_name"] = " ";      
+    $vars["edit_message"] = " "; 
+    $vars["response"] = " "; 
+
+    if ($_GET['id']) $vars["id_product"] = (int)$_GET['id'];
+ 
+    if (isset($_GET['action'])) {
+        $action = $_GET['action'];
+        $id_feedback = (int)$_GET['id_feedback'];
+        $feedback = getFeedback($id_feedback)[0];
+        if ($feedback != null) {
+            switch ($action) {
+                case "edit":          
+                    $vars['edit_name'] = $feedback['feedback_user'];
+                    $vars['edit_message'] = $feedback['feedback_body'];
+                    $vars['id_product'] = $feedback['product_id'];
+                    $vars["action"] = "update";
+                    break;
+                case "delete":
+                    $vars['id_product'] = $feedback['product_id'];
+                    if (deleteFeedback($id_feedback)) 
+                        header("Location: /feedback/?status=delete&id=" . $vars["id_product"]);                
+                    else 
+                        header("Location: /feedback/?status=error&id=" . $vars["id_product"]);
+                    break;
+            }
+        } else header("Location: /feedback/?status=error");       
     }
-
-    $result = file_get_contents($template);
     
-    if (!empty($vars)) {
-        foreach ($vars as $key => $value) {
-            if ($value != null) {
-                $key = '{{' . strtoupper($key) . '}}';
-                $result = str_replace($key, $value, $result);
-            }         
-        }
+    $status = $_GET['status'];   
+    if ($status != null) $vars["response"] = writeStatus($status);  
+    
+    if ($_REQUEST['send'] == 'save') {
+        if (addFeedback($vars["id_product"])) 
+            header("Location: /feedback/?status=save&id=" . $vars["id_product"]);
+        else
+            header("Location: /feedback/?status=error&id=" . $vars["id_product"]);
+    } else if ($_REQUEST['send'] == 'update') {
+        if (updateFeedback($id_feedback, $vars["id_product"])) 
+            header("Location: /feedback/?status=edit&id=" . $vars["id_product"]);
+        else
+            header("Location: /feedback/?status=error&id=" . $vars["id_product"]);
+    }
+
+    if ($vars["id_product"] != null) $vars["feedbackfeed"] = getAllFeedback($vars["id_product"]); 
+}
+
+function writeStatus($status) {
+    $result = "";
+    switch ($status) {
+        case "save":
+            $result = "Запись добавлена";
+            break;
+        case "edit":
+            $result = "Запись изменена";
+            break;
+        case "delete":
+            $result = "Запись удалена";
+            break;
+        case "error":
+            $result = "Произошла ошибка";
+            break;
     }
     return $result;
 }
 
+function deleteFeedback($id_feedback) {
+    $sql = "DELETE FROM `feedback` WHERE `id_feedback`={$id_feedback}";
+    return executeQuery($sql);
+}
 
-function _log($s, $suffix='')
-	{
-		
-		if (is_array($s) || is_object($s)) $s = print_r($s, 1);
-		$s="### ".date("d.m.Y H:i:s")."\r\n".$s."\r\n\r\n\r\n";
+function updateFeedback($id_feedback, $id_product) {
+    $db_link = getConnection();
+    $feedback_user = mysqli_real_escape_string($db_link, (string)htmlspecialchars(strip_tags($_POST['name'])));
+    $feedback_body = mysqli_real_escape_string($db_link, (string)htmlspecialchars(strip_tags($_POST['review'])));
+    $sql = "UPDATE `feedback` SET `feedback_user`='{$feedback_user}',`feedback_body`='{$feedback_body}',`product_id`={$id_product} WHERE `id_feedback`={$id_feedback}";
+    return executeQuery($sql);
+}
 
-		if (mb_strlen($suffix))
-			$suffix = "_".$suffix;
-			
-		      _writeToFile($_SERVER['DOCUMENT_ROOT']."/_log/logs".$suffix.".log",$s,"a+");
+function addFeedback($id_product) {
+    $db_link = getConnection();
+    $feedback_user = mysqli_real_escape_string($db_link, (string)htmlspecialchars(strip_tags($_POST['name'])));
+    $feedback_body = mysqli_real_escape_string($db_link, (string)htmlspecialchars(strip_tags($_POST['review'])));
+    $sql = "INSERT INTO `feedback`(`feedback_user`, `feedback_body`, `product_id`) VALUES ('{$feedback_user}', '{$feedback_body}', {$id_product})";
+    return executeQuery($sql);
+}
 
-		return $s;
-	}
+function getFeedback ($feedback_id) {
+    $sql = "SELECT * FROM feedback WHERE id_feedback = $feedback_id";
+    return getAssocResult($sql);
+}
 
-function _writeToFile($fileName, $content, $mode="w")
-	{
-		$dir=mb_substr($fileName,0,strrpos($fileName,"/"));
-		if (!is_dir($dir))
-		{
-			_makeDir($dir);
-		}
-
-		if($mode != "r")
-		{
-			$fh=fopen($fileName, $mode);
-			if (fwrite($fh, $content))
-			{
-				fclose($fh);
-				@chmod($fileName, 0644);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-function _makeDir($dir, $is_root = true, $root = '')
-        {
-            $dir = rtrim($dir, "/");
-            if (is_dir($dir)) return true;
-            if (mb_strlen($dir) <= mb_strlen($_SERVER['DOCUMENT_ROOT'])) 
-return true;
-            if (str_replace($_SERVER['DOCUMENT_ROOT'], "", $dir) == $dir) 
-return true;
-
-            if ($is_root)
-            {
-                $dir = str_replace($_SERVER['DOCUMENT_ROOT'], '', $dir);
-                $root = $_SERVER['DOCUMENT_ROOT'];
-            }
-            $dir_parts = explode("/", $dir);
-
-            foreach ($dir_parts as $step => $value)
-            {
-                if ($value != '')
-                {
-                    $root = $root . "/" . $value;
-					
-                    if (!is_dir($root))
-                    {
-                        mkdir($root, 0755);
-                        chmod($root, 0755);
-                    }
-                }
-            }
-            return $root;
-        }
+function getAllFeedback ($product_id) {
+    $sql = "SELECT * FROM feedback WHERE product_id = $product_id";
+    return getAssocResult($sql);
+}
 
 function home3_3 ($arr) {
     $str = "";
@@ -170,7 +246,48 @@ function build_menu_mega_flex ($title, $arr) {
     return build_tag("div", "", "mega-flex menu__mega-flex mega-flex_bright", $html);
 }
 
-function build_menu ($arr, $html = "") {
+function build_menu () {
+    $arr = [
+        "Home" => "#",
+        "Man" => [
+            "Home" => [
+                "Dress" => "#",
+                "Dress" => "#",
+                "Dress" => "#",
+                "Dress" => "#"
+            ],
+            "Women" => [
+                "Dress" => "#",
+                "Dress" => "#",
+                "Dress" => "#",
+                "Dress" => "#"
+            ],
+            "Kids" => [
+                "Dress" => "#",
+                "Tops" => "#",
+                "Dress" => "#",
+                "Dress" => "#"
+            ]
+        ],
+        "Women" => "#",
+        "Kids" => [
+            "Home" => [
+                "Dress" => "#",
+                "Tops" => "#",
+                "Dress" => "#",
+                "Dress" => "#"
+            ],
+            "Women" => [
+                "Tops" => "#",
+                "Dress" => "#",
+                "Dress" => "#",
+                "Dress" => "#"
+            ]
+        ],
+        "Accoseriese" => "#",
+        "Featured" => "#",
+        "Hot Deals" => "#"
+    ];
     foreach ($arr as $key => $value) {
         
         if (is_array($value)) {
@@ -240,8 +357,13 @@ function build_menu ($arr, $html = "") {
     </nav>
 */
 
-function home4 ($dir) {
-    $content = "";
+function products_All ($page_name) {
+    //добавить условие с $page_name
+    $sql = "SELECT * FROM images";
+
+    $products_All = getAssocResult($sql);
+/*
+
     $files = array_splice(scandir($dir), 2);
     if (is_array($files)) {
         foreach ($files as $name) {
@@ -259,5 +381,7 @@ function home4 ($dir) {
            
         }
     }
-    return $content;
+    */
+    return $products_All;
 }
+

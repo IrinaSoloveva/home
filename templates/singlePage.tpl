@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <title>Single Page</title>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link href="packages/icons/fontawesome-free-5.0.13/web-fonts-with-css/css/fontawesome-all.css" rel="stylesheet">
+    <link href="/packages/icons/fontawesome-free-5.0.13/web-fonts-with-css/css/fontawesome-all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
-    <link href="style/style.css" rel="stylesheet">
+    <link href="/style/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -249,6 +249,10 @@
                     <i class="fas fa-shopping-cart"></i>
                     <span>Add to Cart</span>
                 </button>
+                <button>
+                    <i class="fas fa-shopping-cart"></i>
+                    <span><a href="/feedback/?id={{ID}}">Отзывы</a></span>
+                </button>
             </div>
         </div>
     </div>
@@ -257,69 +261,7 @@
 
     <div class="productsAll">
         <div class="container">
-            <div class="productUnit">
-                <a href="#" class="product">
-                    <img src="img/product/Layer%202.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="#" class="product">
-                    <img src="img/product/Layer%203.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="#" class="product">
-                    <img src="img/product/Layer%205.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="productUnit">
-                <a href="#" class="product">
-                    <img src="img/product/Layer%206.jpg">
-                    <div class="productInf">
-                        <p class="productName tac">Mango  People  T-shirt</p>
-                        <span class="productPrice">$52.00</span>
-                    </div>
-                </a>
-                <div class="add-to-cart">
-                    <a href="#" class="add-to-cart-btn tac">
-                        <img src="img/product/copyBasket.png">
-                        <span>Add to Cart</span>
-                    </a>
-                </div>
-            </div>
+            {{PRODUCTS_ALL}}
         </div>
     </div>
 
@@ -402,7 +344,7 @@
             </div>
         </div>
     </footer>
-    <script src="js/jsSelectMenu.js"></script>
+    <script src="/js/jsSelectMenu.js"></script>
 </body>
 
 </html>
